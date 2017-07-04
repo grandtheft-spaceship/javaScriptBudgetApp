@@ -8,7 +8,7 @@ var budgetController = ( function() {
   };
 
   Expense.prototype.calcPercentage = function( totalIncome ) {
-    if ( this.value > 0 ) {
+    if ( totalIncome > 0 ) {
       this.percentage = Math.round( ( this.value / totalIncome ) * 100 );
     } else {
       this.percentage = -1;
@@ -236,12 +236,11 @@ var UIController = ( function() {
       document.querySelector( DOMstrings.budgetLabel ).textContent = formatNumber( obj.budget, type );
       document.querySelector( DOMstrings.incomeLabel ).textContent = formatNumber( obj.totalInc, "inc" );
       document.querySelector( DOMstrings.expensesLabel ).textContent = formatNumber( obj.totalExp, "exp" );
-      document.querySelector( DOMstrings.percentageLabel ).textContent = obj.percentage;
 
       if ( obj.percentage > 0 ) {
         document.querySelector( DOMstrings.percentageLabel ).textContent = obj.percentage + "%";
       } else {
-        document.querySelector( DOMstrings.percentageLabel ).textContent = "-----";
+        document.querySelector( DOMstrings.percentageLabel ).textContent = "---";
       }
     },
     displayPercentages: function( percentages ) {
@@ -266,6 +265,19 @@ var UIController = ( function() {
       year = now.getFullYear();
 
       document.querySelector( DOMstrings.dateLabel ).textContent = months[ month ] + " " + year;
+    },
+    changedType: function() {
+      var fields = document.querySelectorAll(
+        DOMstrings.inputType + "," +
+        DOMstrings.inputDescription + "," +
+        DOMstrings.inputValue
+      );
+
+      nodeListForEach( fields, function( current ) {
+        current.classList.toggle( "red-focus" );
+      });
+
+      document.querySelector( DOMstrings.inputBtn ).classList.toggle( "red" );
     }
 
   };
@@ -296,6 +308,8 @@ var controller = ( function( budgetCtrl, UICtrl ) {
     });
 
     document.querySelector( DOM.container ).addEventListener( "click", ctrlDeleteItem );
+
+    document.querySelector( DOM.inputType ).addEventListener( "change", UICtrl.changedType );
 
   };
 
